@@ -1,5 +1,7 @@
+using AutoMapper;
 using BLL.Services.Abstract;
 using BLL.Services.Concrete;
+using CIL.Additionals;
 using CIL.Models;
 using DAL;
 using DAL.Repository.Abstract;
@@ -43,6 +45,15 @@ namespace SecondChance
             services.AddIdentity<User, IdentityRole<Guid>>()
                 .AddEntityFrameworkStores<DatabaseContext>();
 
+            // Auto Mapper Configurations
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new AutoMapping());
+            });
+
+            IMapper mapper = mappingConfig.CreateMapper();
+            services.AddSingleton(mapper);
+
             services.AddControllersWithViews().AddNewtonsoftJson();
 
             services.AddSwaggerGen(c =>
@@ -52,6 +63,7 @@ namespace SecondChance
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IUserAuthService, UserAuthService>();
+            services.AddScoped<IUserService, UserService>();
 
             services.AddCors();
 
