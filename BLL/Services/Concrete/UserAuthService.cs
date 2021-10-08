@@ -48,6 +48,7 @@ namespace BLL.Services.Concrete
                 UserName = registerModel.Username,
                 Email = registerModel.Email,
                 PasswordHash = registerModel.PasswordHash,
+                UserLevel = registerModel.UserLevel,
                 UserRole = registerModel.UserRole
             };
 

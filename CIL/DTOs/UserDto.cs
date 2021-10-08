@@ -15,6 +15,7 @@ namespace CIL.DTOs
         public string PasswordHash { get; set; }
         public string PhoneNumber { get; set; }
         public string Address { get; set; }
+        public string UserLevel { get; set; }
         public string UserRole { get; set; }
     }
 }

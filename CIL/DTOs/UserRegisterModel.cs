@@ -12,6 +12,7 @@ namespace CIL.DTOs
         public string Username { get; set; }
         public string Email { get; set; }
         public string PasswordHash { get; set; }
+        public string UserLevel { get; set; } = "A";
         public string UserRole { get; set; }
     }
 }
