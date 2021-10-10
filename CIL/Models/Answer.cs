@@ -13,5 +13,6 @@ namespace CIL.Models
         public string QuestionAnswer { get; set; }
         public DateTime? DateBegin { get; set; }
         public DateTime? DateEnd { get; set; }
+        public double? Score { get; set; }
     }
 }

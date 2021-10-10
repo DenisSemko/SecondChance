@@ -9,7 +9,7 @@ namespace CIL.Models
     {
         public Guid Id { get; set; }
         public string Description { get; set; }
-        public int DifficultyLevel { get; set; }
+        public string DifficultyLevel { get; set; }
 
         [IgnoreDataMember]
         public ICollection<DailyTest> DailyTests { get; set; }
