@@ -1,6 +1,8 @@
 ﻿using BLL.Services.Abstract;
 using CIL.DTOs;
 using CIL.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -23,7 +25,15 @@ namespace SecondChance.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> Get()
         {
-            return Ok(await userService.Get());
+            try
+            {
+                return Ok(await userService.Get());
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         [HttpGet("{id:Guid}")]

@@ -21,6 +21,7 @@ namespace DAL.Repository.Concrete
         public IAnswerRepository AnswerRepository => new AnswerRepository(databaseContext);
         public IGameRepository GameRepository => new GameRepository(databaseContext);
         public IDairyRepository DairyRepository => new DairyRepository(databaseContext);
+        public IDailyTestResultRepository DailyTestResultRepository => new DailyTestResultRepository(databaseContext);
 
         public void Complete()
         {

@@ -12,6 +12,8 @@ namespace CIL.Additionals
         public AutoMapping()
         {
             CreateMap<UserDto, User>();
+            CreateMap<QuestionDto, Question>();
+            CreateMap<DailyTestResultDto, DailyTestResult>();
         }
     }
 }

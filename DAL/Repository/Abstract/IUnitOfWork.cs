@@ -13,6 +13,7 @@ namespace DAL.Repository.Abstract
         IAnswerRepository AnswerRepository { get; }
         IGameRepository GameRepository { get; }
         IDairyRepository DairyRepository { get; }
+        IDailyTestResultRepository DailyTestResultRepository { get; }
         void Complete();
         bool HasChanges();
     }

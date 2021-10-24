@@ -43,14 +43,14 @@ namespace DAL
                 .HasMany(s => s.UserChilds)
                 .WithOne(a => a.ChildId);
 
-            //DailyTest - Question
-            modelBuilder.Entity<DailyTest>()
-                .HasOne(s => s.Question)
-                .WithMany(a => a.DailyTests);
-
+            //Question - DailyTest
             modelBuilder.Entity<Question>()
-                .HasMany(s => s.DailyTests)
-                .WithOne(a => a.Question);
+                .HasOne(s => s.DailyTest)
+                .WithMany(a => a.Questions);
+
+            modelBuilder.Entity<DailyTest>()
+                .HasMany(s => s.Questions)
+                .WithOne(a => a.DailyTest);
 
             //DailyTest Result - DailyTest - User
             modelBuilder.Entity<DailyTestResult>()

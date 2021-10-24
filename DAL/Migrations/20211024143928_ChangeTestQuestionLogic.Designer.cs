@@ -4,14 +4,16 @@ using DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DAL.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20211024143928_ChangeTestQuestionLogic")]
+    partial class ChangeTestQuestionLogic
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -237,18 +239,18 @@ namespace DAL.Migrations
                     b.Property<string>("CorrectAnswer")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("DailyTestId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DifficultyLevel")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("TestIdId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("DailyTestId");
+                    b.HasIndex("TestIdId");
 
                     b.ToTable("Question");
                 });
@@ -533,9 +535,9 @@ namespace DAL.Migrations
 
             modelBuilder.Entity("CIL.Models.Question", b =>
                 {
-                    b.HasOne("CIL.Models.DailyTest", "DailyTest")
+                    b.HasOne("CIL.Models.DailyTest", "TestId")
                         .WithMany("Questions")
-                        .HasForeignKey("DailyTestId");
+                        .HasForeignKey("TestIdId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>

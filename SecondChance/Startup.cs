@@ -7,6 +7,7 @@ using DAL;
 using DAL.Repository.Abstract;
 using DAL.Repository.Concrete;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -64,11 +65,13 @@ namespace SecondChance
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IUserAuthService, UserAuthService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IParentChildService, ParentChildService>();
+            services.AddScoped<IQuestionService, QuestionService>();
+            services.AddScoped<IDailyTestResultService, DailyTestResultService>();
 
             services.AddCors();
 
             //Json Web Token
-
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -117,9 +120,9 @@ namespace SecondChance
             app.UseDefaultFiles();
             app.UseStaticFiles();
 
-            app.UseAuthentication();
-
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

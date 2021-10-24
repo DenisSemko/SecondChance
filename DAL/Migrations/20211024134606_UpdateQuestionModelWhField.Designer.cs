@@ -4,14 +4,16 @@ using DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DAL.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20211024134606_UpdateQuestionModelWhField")]
+    partial class UpdateQuestionModelWhField
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -69,7 +71,12 @@ namespace DAL.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("QuestionId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("QuestionId");
 
                     b.ToTable("DailyTest");
                 });
@@ -237,9 +244,6 @@ namespace DAL.Migrations
                     b.Property<string>("CorrectAnswer")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("DailyTestId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -247,8 +251,6 @@ namespace DAL.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("DailyTestId");
 
                     b.ToTable("Question");
                 });
@@ -484,6 +486,13 @@ namespace DAL.Migrations
                         .HasForeignKey("QuestionId");
                 });
 
+            modelBuilder.Entity("CIL.Models.DailyTest", b =>
+                {
+                    b.HasOne("CIL.Models.Question", "Question")
+                        .WithMany("DailyTests")
+                        .HasForeignKey("QuestionId");
+                });
+
             modelBuilder.Entity("CIL.Models.DailyTestResult", b =>
                 {
                     b.HasOne("CIL.Models.DailyTest", "DailyTest")
@@ -529,13 +538,6 @@ namespace DAL.Migrations
                     b.HasOne("CIL.Models.User", "ParentId")
                         .WithMany("UserParents")
                         .HasForeignKey("ParentIdId");
-                });
-
-            modelBuilder.Entity("CIL.Models.Question", b =>
-                {
-                    b.HasOne("CIL.Models.DailyTest", "DailyTest")
-                        .WithMany("Questions")
-                        .HasForeignKey("DailyTestId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
