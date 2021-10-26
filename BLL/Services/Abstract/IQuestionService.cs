@@ -11,6 +11,7 @@ namespace BLL.Services.Abstract
     {
         public Task<IEnumerable<Question>> Get();
         public Task<Question> GetById(Guid id);
+        public Task<IEnumerable<Question>> GetByTestId(Guid id);
         public Task<Question> Add(Question question);
         public Task<Question> Add(QuestionDto question);
     }

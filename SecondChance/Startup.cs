@@ -68,6 +68,9 @@ namespace SecondChance
             services.AddScoped<IParentChildService, ParentChildService>();
             services.AddScoped<IQuestionService, QuestionService>();
             services.AddScoped<IDailyTestResultService, DailyTestResultService>();
+            services.AddScoped<IAnswerService, AnswerService>();
+            services.AddScoped<IAnswersService, AnswersService>();
+            services.AddScoped<IDailyTestService, DailyTestService>();
 
             services.AddCors();
 

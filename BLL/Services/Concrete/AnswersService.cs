@@ -14,10 +14,7 @@ namespace BLL.Services.Concrete
 {
     public class AnswersService : IAnswersService
     {
-        private readonly IAnswerRepository answerRepository;
-        private readonly IUserRepository userRepository;
-        private readonly IDailyTestRepository dailyTestRepository;
-        private readonly IDailyTestResultRepository dailyTestResultRepository;
+        private readonly IUnitOfWork unitOfWork;
         private readonly DatabaseContext databaseContext;
 
         private int positiveScore = 1;
@@ -36,34 +33,40 @@ namespace BLL.Services.Concrete
         private double minBadB = 0.0;
         private double minBadC = 0.0;
 
-        public AnswersService(IAnswerRepository answerRepository, DatabaseContext databaseContext, 
-            IUserRepository userRepository, IDailyTestRepository dailyTestRepository,
-            IDailyTestResultRepository dailyTestResultRepository)
+        public AnswersService(IUnitOfWork unitOfWork, DatabaseContext databaseContext)
         {
-            this.answerRepository = answerRepository;
+            this.unitOfWork = unitOfWork;
             this.databaseContext = databaseContext;
-            this.userRepository = userRepository;
-            this.dailyTestRepository = dailyTestRepository;
-            this.dailyTestResultRepository = dailyTestResultRepository;
         }
 
         private async Task<IEnumerable<Answer>> GetAllAnswers(Guid userId, Guid testId)
         {
-            var result = await databaseContext.Answer.Where(a => a.PassedUserId.Id == userId).Where(a => a.DailyTest.Id == testId).Where(a => a.DateBegin.Value.Day == DateTime.Now.Day).ToListAsync();
-            return result; 
+            try
+            {
+                var result = await databaseContext.Answer.Where(a => a.PassedUserId.Id == userId).Where(a => a.DailyTest.Id == testId).Where(a => a.DateBegin.Value.Day == DateTime.Now.Day)
+                    .Include(o => o.DailyTest).Include(o => o.PassedUserId).Include(o => o.Question).ToListAsync();
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            
         }
 
-        public async void CheckTheAnswers(Guid userId, Guid testId)
+        public async Task CheckTheAnswers(Guid userId, Guid testId)
         {
             var allAnswers = await GetAllAnswers(userId, testId);
-            if(allAnswers.Count() > 10)
+            // > 10
+            if (allAnswers.Count() > 1)
             {
                 Debug.Assert(false);
                 return;
             }
             foreach(var answer in allAnswers)
             {
-                var time = answer.DateBegin.Value.Minute - answer.DateEnd.Value.Minute;
+                var time = answer.DateEnd.Value.Minute - answer.DateBegin.Value.Minute;
                 totalTimePerTest += time;
                 if (answer.PassedUserId.UserLevel == answer.Question.DifficultyLevel)
                 {
@@ -445,12 +448,12 @@ namespace BLL.Services.Concrete
                     Debug.Assert(false);
                 }
 
-                await answerRepository.Update(answer);
+                await unitOfWork.AnswerRepository.Update(answer);
             }
 
-            var user = await userRepository.GetById(userId);
+            var user = await unitOfWork.UserRepository.GetById(userId);
             var userAge = DateTime.Now.Year - user.BirthDate.Year;
-            var dailyTest = await dailyTestRepository.GetById(testId);
+            var dailyTest = await unitOfWork.DailyTestRepository.GetById(testId);
 
             if (scoreForA != 0)
             {
@@ -467,11 +470,31 @@ namespace BLL.Services.Concrete
             } else if(scoreForB != 0)
             {
                 formula = (userAge * percentPerDifficult) + scoreForB + totalTimePerTest;
+                descriptionResult = CheckFormulaBResults(formula, userAge);
+                if (descriptionResult.Contains("Congratulations"))
+                {
+                    user.UserLevel = "C";
+                }
+                else
+                {
+                    user.UserLevel = "B";
+
+                }
             } else if(scoreForC != 0)
             {
                 formula = (userAge * percentPerDifficult) + scoreForC + totalTimePerTest;
+                descriptionResult = CheckFormulaCResults(formula, userAge);
+                if (descriptionResult.Contains("Congratulations"))
+                {
+                    user.UserLevel = "C";
+                }
+                else
+                {
+                    user.UserLevel = "B";
+
+                }
             }
-            await userRepository.Update(user);
+            await unitOfWork.UserRepository.Update(user);
 
             var testResultId = Guid.NewGuid();
 
@@ -483,14 +506,7 @@ namespace BLL.Services.Concrete
                 Score = formula,
                 Description = descriptionResult
             };
-            await dailyTestResultRepository.Add(testResult);
-
-            // Add blocker to have one test per user on one day
-            //Refresh UserLevel after the result
-            // Add blocker not to pass the same level test, if you have another level
-            //Add GET -> show test with related questions depending on UserLevel
-            // Add POST -> add answers with guid test, guid question
-            // Add Controllers for DailyTestResult
+            await unitOfWork.DailyTestResultRepository.Add(testResult);
         }
 
         private string CheckFormulaAResults(double formula, int userAge)
@@ -501,23 +517,73 @@ namespace BLL.Services.Concrete
                 case 5:
                     minGoodA = 8.25;
                     minBadA = 32.25;
-                    if(formula >= 8.25 && formula < 32.25)
+                    if(formula >= minGoodA && formula < minBadA)
                     {
                         description = "The test result is good, it equals to " + formula + " points. Your level has increased. Congratulations!";
-                    } else if(formula < 8.25)
+                    } else if(formula < minGoodA || formula > minBadA)
                     {
                         description = "The test result is not so good, it equals to " + formula + " points. Your level hasn't changed. Try to work harder next time!";
                     }
                     break;
                 case 6:
+                    minGoodA = 8.5;
+                    minBadA = 32.5;
+                    if (formula >= minGoodA && formula < minBadA)
+                    {
+                        description = "The test result is good, it equals to " + formula + " points. Your level has increased. Congratulations!";
+                    }
+                    else if (formula < minGoodA || formula > minBadA)
+                    {
+                        description = "The test result is not so good, it equals to " + formula + " points. Your level hasn't changed. Try to work harder next time!";
+                    }
                     break;
                 case 7:
+                    minGoodA = 8.75;
+                    minBadA = 32.75;
+                    if (formula >= minGoodA && formula < minBadA)
+                    {
+                        description = "The test result is good, it equals to " + formula + " points. Your level has increased. Congratulations!";
+                    }
+                    else if (formula < minGoodA || formula > minBadA)
+                    {
+                        description = "The test result is not so good, it equals to " + formula + " points. Your level hasn't changed. Try to work harder next time!";
+                    }
                     break;
                 case 8:
+                    minGoodA = 9;
+                    minBadA = 33;
+                    if (formula >= minGoodA && formula < minBadA)
+                    {
+                        description = "The test result is good, it equals to " + formula + " points. Your level has increased. Congratulations!";
+                    }
+                    else if (formula < minGoodA || formula > minBadA)
+                    {
+                        description = "The test result is not so good, it equals to " + formula + " points. Your level hasn't changed. Try to work harder next time!";
+                    }
                     break;
                 case 9:
+                    minGoodA = 9.25;
+                    minBadA = 33.25;
+                    if (formula >= minGoodA && formula < minBadA)
+                    {
+                        description = "The test result is good, it equals to " + formula + " points. Your level has increased. Congratulations!";
+                    }
+                    else if (formula < minGoodA || formula > minBadA)
+                    {
+                        description = "The test result is not so good, it equals to " + formula + " points. Your level hasn't changed. Try to work harder next time!";
+                    }
                     break;
                 case 10:
+                    minGoodA = 9.5;
+                    minBadA = 33.5;
+                    if (formula >= minGoodA && formula < minBadA)
+                    {
+                        description = "The test result is good, it equals to " + formula + " points. Your level has increased. Congratulations!";
+                    }
+                    else if (formula < minGoodA || formula > minBadA)
+                    {
+                        description = "The test result is not so good, it equals to " + formula + " points. Your level hasn't changed. Try to work harder next time!";
+                    }
                     break;
             }
 
@@ -528,12 +594,163 @@ namespace BLL.Services.Concrete
         {
             string description = "";
 
+            switch (userAge)
+            {
+                case 5:
+                    minGoodB = 8.75;
+                    minBadB = 32.5;
+                    if (formula >= minGoodB && formula < minBadB)
+                    {
+                        description = "The test result is good, it equals to " + formula + " points. Your level has increased. Congratulations!";
+                    }
+                    else if (formula < minGoodB || formula > minBadB)
+                    {
+                        description = "The test result is not so good, it equals to " + formula + " points. Your level hasn't changed. Try to work harder next time!";
+                    }
+                    break;
+                case 6:
+                    minGoodB = 9.1;
+                    minBadB = 33.1;
+                    if (formula >= minGoodB && formula < minBadB)
+                    {
+                        description = "The test result is good, it equals to " + formula + " points. Your level has increased. Congratulations!";
+                    }
+                    else if (formula < minGoodB || formula > minBadB)
+                    {
+                        description = "The test result is not so good, it equals to " + formula + " points. Your level hasn't changed. Try to work harder next time!";
+                    }
+                    break;
+                case 7:
+                    minGoodB = 9.45;
+                    minBadB = 32.45;
+                    if (formula >= minGoodB && formula < minBadB)
+                    {
+                        description = "The test result is good, it equals to " + formula + " points. Your level has increased. Congratulations!";
+                    }
+                    else if (formula < minGoodB || formula > minBadB)
+                    {
+                        description = "The test result is not so good, it equals to " + formula + " points. Your level hasn't changed. Try to work harder next time!";
+                    }
+                    break;
+                case 8:
+                    minGoodB = 9.8;
+                    minBadB = 33.8;
+                    if (formula >= minGoodB && formula < minBadB)
+                    {
+                        description = "The test result is good, it equals to " + formula + " points. Your level has increased. Congratulations!";
+                    }
+                    else if (formula < minGoodB || formula > minBadB)
+                    {
+                        description = "The test result is not so good, it equals to " + formula + " points. Your level hasn't changed. Try to work harder next time!";
+                    }
+                    break;
+                case 9:
+                    minGoodB = 10.15;
+                    minBadB = 34.15;
+                    if (formula >= minGoodB && formula < minBadB)
+                    {
+                        description = "The test result is good, it equals to " + formula + " points. Your level has increased. Congratulations!";
+                    }
+                    else if (formula < minGoodB || formula > minBadB)
+                    {
+                        description = "The test result is not so good, it equals to " + formula + " points. Your level hasn't changed. Try to work harder next time!";
+                    }
+                    break;
+                case 10:
+                    minGoodB = 10.5;
+                    minBadB = 34.5;
+                    if (formula >= minGoodB && formula < minBadB)
+                    {
+                        description = "The test result is good, it equals to " + formula + " points. Your level has increased. Congratulations!";
+                    }
+                    else if (formula < minGoodB || formula > minBadB)
+                    {
+                        description = "The test result is not so good, it equals to " + formula + " points. Your level hasn't changed. Try to work harder next time!";
+                    }
+                    break;
+            }
             return description;
         }
 
         private string CheckFormulaCResults(double formula, int userAge)
         {
             string description = "";
+
+            switch (userAge)
+            {
+                case 5:
+                    minGoodC = 9;
+                    minBadC = 33;
+                    if (formula >= minGoodC && formula < minBadC)
+                    {
+                        description = "The test result is good, it equals to " + formula + " points. Your level has increased. Congratulations!";
+                    }
+                    else if (formula < minGoodC || formula > minBadC)
+                    {
+                        description = "The test result is not so good, it equals to " + formula + " points. Your level hasn't changed. Try to work harder next time!";
+                    }
+                    break;
+                case 6:
+                    minGoodC = 9.4;
+                    minBadC = 33.4;
+                    if (formula >= minGoodC && formula < minBadC)
+                    {
+                        description = "The test result is good, it equals to " + formula + " points. Your level has increased. Congratulations!";
+                    }
+                    else if (formula < minGoodC || formula > minBadC)
+                    {
+                        description = "The test result is not so good, it equals to " + formula + " points. Your level hasn't changed. Try to work harder next time!";
+                    }
+                    break;
+                case 7:
+                    minGoodC = 9.8;
+                    minBadC = 33.8;
+                    if (formula >= minGoodC && formula < minBadC)
+                    {
+                        description = "The test result is good, it equals to " + formula + " points. Your level has increased. Congratulations!";
+                    }
+                    else if (formula < minGoodC || formula > minBadC)
+                    {
+                        description = "The test result is not so good, it equals to " + formula + " points. Your level hasn't changed. Try to work harder next time!";
+                    }
+                    break;
+                case 8:
+                    minGoodC = 10.2;
+                    minBadC = 34.2;
+                    if (formula >= minGoodC && formula < minBadC)
+                    {
+                        description = "The test result is good, it equals to " + formula + " points. Your level has increased. Congratulations!";
+                    }
+                    else if (formula < minGoodC || formula > minBadC)
+                    {
+                        description = "The test result is not so good, it equals to " + formula + " points. Your level hasn't changed. Try to work harder next time!";
+                    }
+                    break;
+                case 9:
+                    minGoodC = 10.6;
+                    minBadC = 34.6;
+                    if (formula >= minGoodC && formula < minBadC)
+                    {
+                        description = "The test result is good, it equals to " + formula + " points. Your level has increased. Congratulations!";
+                    }
+                    else if (formula < minGoodC || formula > minBadC)
+                    {
+                        description = "The test result is not so good, it equals to " + formula + " points. Your level hasn't changed. Try to work harder next time!";
+                    }
+                    break;
+                case 10:
+                    minGoodC = 11;
+                    minBadC = 35;
+                    if (formula >= minGoodC && formula < minBadC)
+                    {
+                        description = "The test result is good, it equals to " + formula + " points. Your level has increased. Congratulations!";
+                    }
+                    else if (formula < minGoodC || formula > minBadC)
+                    {
+                        description = "The test result is not so good, it equals to " + formula + " points. Your level hasn't changed. Try to work harder next time!";
+                    }
+                    break;
+            }
 
             return description;
         }

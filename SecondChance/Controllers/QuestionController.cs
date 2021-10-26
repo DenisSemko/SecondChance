@@ -27,7 +27,7 @@ namespace SecondChance.Controllers
             return Ok(await questionService.Get());
         }
 
-        [HttpGet("{id:Guid}")]
+        /*[HttpGet("{id:Guid}")]
         public async Task<ActionResult<Question>> GetById(Guid id)
         {
             try
@@ -41,6 +41,22 @@ namespace SecondChance.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
                     "Error retrieving data from the database");
+            }
+        }*/
+
+        [HttpGet("{id:Guid}")]
+        public async Task<IEnumerable<Question>> GetByTestId(Guid id)
+        {
+            try
+            {
+                var result = await questionService.GetByTestId(id);
+                if (result == null) return null;
+
+                return result;
+            }
+            catch (Exception)
+            {
+                throw;
             }
         }
 

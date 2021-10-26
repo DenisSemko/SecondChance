@@ -34,6 +34,12 @@ namespace BLL.Services.Concrete
             return result;
         }
 
+        public async Task<IEnumerable<Question>> GetByTestId(Guid id)
+        {
+            var result = await unitOfWork.QuestionRepository.GetByTestId(id);
+            return result;
+        }
+
         public async Task<Question> Add(Question question)
         {
             var result = await unitOfWork.QuestionRepository.Add(question);

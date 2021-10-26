@@ -8,6 +8,6 @@ namespace BLL.Services.Abstract
 {
     public interface IAnswersService
     {
-        void CheckTheAnswers(Guid userId, Guid testId);
+        Task CheckTheAnswers(Guid userId, Guid testId);
     }
 }
