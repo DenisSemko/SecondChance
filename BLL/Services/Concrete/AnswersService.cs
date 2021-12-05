@@ -68,7 +68,7 @@ namespace BLL.Services.Concrete
             {
                 var time = answer.DateEnd.Value.Minute - answer.DateBegin.Value.Minute;
                 totalTimePerTest += time;
-                if (answer.PassedUserId.UserLevel == answer.Question.DifficultyLevel)
+                if (answer.PassedUserId.UserKnowledgeLevel == answer.Question.DifficultyLevel)
                 {
                     switch (answer.Question.DifficultyLevel)
                     {
@@ -461,10 +461,10 @@ namespace BLL.Services.Concrete
                 descriptionResult = CheckFormulaAResults(formula, userAge);
                 if(descriptionResult.Contains("Congratulations"))
                 {
-                    user.UserLevel = "B";
+                    user.UserKnowledgeLevel = "B";
                 } else
                 {
-                    user.UserLevel = "A";
+                    user.UserKnowledgeLevel = "A";
 
                 }
             } else if(scoreForB != 0)
@@ -473,11 +473,11 @@ namespace BLL.Services.Concrete
                 descriptionResult = CheckFormulaBResults(formula, userAge);
                 if (descriptionResult.Contains("Congratulations"))
                 {
-                    user.UserLevel = "C";
+                    user.UserKnowledgeLevel = "C";
                 }
                 else
                 {
-                    user.UserLevel = "B";
+                    user.UserKnowledgeLevel = "B";
 
                 }
             } else if(scoreForC != 0)
@@ -486,11 +486,11 @@ namespace BLL.Services.Concrete
                 descriptionResult = CheckFormulaCResults(formula, userAge);
                 if (descriptionResult.Contains("Congratulations"))
                 {
-                    user.UserLevel = "C";
+                    user.UserKnowledgeLevel = "C";
                 }
                 else
                 {
-                    user.UserLevel = "B";
+                    user.UserKnowledgeLevel = "B";
 
                 }
             }

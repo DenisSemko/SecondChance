@@ -18,7 +18,7 @@ namespace CIL.Models
         public DateTime BirthDate { get; set; }
 
         public string Address { get; set; }
-        public string UserLevel { get; set; }
+        public string UserKnowledgeLevel { get; set; }
 
         public string UserRole { get; set; }
 
