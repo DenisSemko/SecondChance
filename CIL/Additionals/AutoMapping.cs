@@ -15,6 +15,7 @@ namespace CIL.Additionals
             CreateMap<QuestionDto, Question>();
             CreateMap<DailyTestResultDto, DailyTestResult>();
             CreateMap<ParentChildDto, ParentChild>();
+            CreateMap<UserPostDto, User>();
         }
     }
 }

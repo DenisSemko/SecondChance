@@ -34,6 +34,12 @@ namespace BLL.Services.Concrete
             return result;
         }
 
+        public async Task<IEnumerable<ParentChild>> GetByParentId(Guid id)
+        {
+            var result = await unitOfWork.ParentChildRepository.GetByParentId(id);
+            return result;
+        }
+
         public async Task<ParentChild> Add(ParentChild parentChildUser)
         {
             var result = await unitOfWork.ParentChildRepository.Add(parentChildUser);
@@ -48,8 +54,8 @@ namespace BLL.Services.Concrete
             var parentChild = new ParentChild()
             {
                 Id = parentChildUser.Id,
-                ChildId = childUser,
-                ParentId = parentUser
+                Parent = parentUser,
+                Child = childUser
             };
             var result = await unitOfWork.ParentChildRepository.Add(parentChild);
             return result;

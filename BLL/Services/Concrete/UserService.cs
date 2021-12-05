@@ -2,9 +2,12 @@
 using BLL.Services.Abstract;
 using CIL.DTOs;
 using CIL.Models;
+using DAL;
 using DAL.Repository.Abstract;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,11 +17,13 @@ namespace BLL.Services.Concrete
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
+        private readonly DatabaseContext databaseContext;
 
-        public UserService(IUnitOfWork unitOfWork, IMapper mapper)
+        public UserService(IUnitOfWork unitOfWork, IMapper mapper, DatabaseContext databaseContext)
         {
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
+            this.databaseContext = databaseContext;
         }
 
         public async Task<IEnumerable<User>> Get()
@@ -29,6 +34,24 @@ namespace BLL.Services.Concrete
         public async Task<User> GetById(Guid id)
         {
             var result = await unitOfWork.UserRepository.GetById(id);
+            return result;
+        }
+
+        public async Task<User> Add(UserPostDto userDto)
+        {
+            var user = new User()
+            {
+                Id = userDto.Id,
+                Name = userDto.Name,
+                Surname = userDto.Surname,
+                BirthDate = userDto.BirthDate,
+                UserName = userDto.Username,
+                Email = userDto.Email,
+                PasswordHash = userDto.PasswordHash,
+                UserKnowledgeLevel = userDto.UserKnowledgeLevel,
+                UserRole = userDto.UserRole
+            };
+            var result = await unitOfWork.UserRepository.Add(user);
             return result;
         }
 

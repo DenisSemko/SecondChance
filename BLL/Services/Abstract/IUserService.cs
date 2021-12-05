@@ -11,6 +11,7 @@ namespace BLL.Services.Abstract
     {
         public Task<IEnumerable<User>> Get();
         public Task<User> GetById(Guid id);
+        public Task<User> Add(UserPostDto user);
         public Task<User> Update(UserDto item);
         public Task<User> Update(User item);
         public Task<User> DeleteById(Guid id);

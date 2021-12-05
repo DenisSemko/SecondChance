@@ -30,18 +30,18 @@ namespace DAL
 
             //ParentChild - User
             modelBuilder.Entity<ParentChild>()
-                .HasOne(s => s.ParentId)
+                .HasOne(s => s.Parent)
                 .WithMany(a => a.UserParents);
             modelBuilder.Entity<ParentChild>()
-                .HasOne(s => s.ChildId)
+                .HasOne(s => s.Child)
                 .WithMany(a => a.UserChilds);
 
             modelBuilder.Entity<User>()
                 .HasMany(s => s.UserParents)
-                .WithOne(a => a.ParentId);
+                .WithOne(a => a.Parent);
             modelBuilder.Entity<User>()
                 .HasMany(s => s.UserChilds)
-                .WithOne(a => a.ChildId);
+                .WithOne(a => a.Child);
 
             //Question - DailyTest
             modelBuilder.Entity<Question>()

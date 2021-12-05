@@ -7,7 +7,7 @@ namespace CIL.Models
     public class ParentChild
     {
         public Guid Id { get; set; }
-        public User ParentId { get; set; }
-        public User ChildId { get; set; }
+        public User Parent { get; set; }
+        public User Child { get; set; }
     }
 }

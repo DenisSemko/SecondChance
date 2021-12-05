@@ -53,6 +53,26 @@ namespace SecondChance.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<ActionResult<User>> Add(UserPostDto user)
+        {
+            try
+            {
+                if (user == null)
+                {
+                    return BadRequest();
+                }
+
+                var result = await userService.Add(user);
+                return result;
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         [HttpPut]
         public async Task<ActionResult<User>> Update(UserDto userDto)
         {

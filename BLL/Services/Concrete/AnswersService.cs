@@ -454,9 +454,11 @@ namespace BLL.Services.Concrete
             var user = await unitOfWork.UserRepository.GetById(userId);
             var userAge = DateTime.Now.Year - user.BirthDate.Year;
             var dailyTest = await unitOfWork.DailyTestRepository.GetById(testId);
+            var totalScore = 0.0;
 
             if (scoreForA != 0)
             {
+                totalScore = scoreForA;
                 formula = (userAge * percentPerDifficult) + scoreForA + totalTimePerTest;
                 descriptionResult = CheckFormulaAResults(formula, userAge);
                 if(descriptionResult.Contains("Congratulations"))
@@ -469,6 +471,7 @@ namespace BLL.Services.Concrete
                 }
             } else if(scoreForB != 0)
             {
+                totalScore = scoreForB;
                 formula = (userAge * percentPerDifficult) + scoreForB + totalTimePerTest;
                 descriptionResult = CheckFormulaBResults(formula, userAge);
                 if (descriptionResult.Contains("Congratulations"))
@@ -482,6 +485,7 @@ namespace BLL.Services.Concrete
                 }
             } else if(scoreForC != 0)
             {
+                totalScore = scoreForC;
                 formula = (userAge * percentPerDifficult) + scoreForC + totalTimePerTest;
                 descriptionResult = CheckFormulaCResults(formula, userAge);
                 if (descriptionResult.Contains("Congratulations"))
@@ -503,6 +507,7 @@ namespace BLL.Services.Concrete
                 Id = testResultId,
                 DailyTest = dailyTest,
                 PassedUserId = user,
+                CorrectAnswers = (int)totalScore,
                 Score = formula,
                 Description = descriptionResult
             };
@@ -519,10 +524,10 @@ namespace BLL.Services.Concrete
                     minBadA = 32.25;
                     if(formula >= minGoodA && formula < minBadA)
                     {
-                        description = "The test result is good, it equals to " + formula + " points. Your level has increased. Congratulations!";
+                        description = "The test result is good, it equals to " + formula + " points. Congratulations!";
                     } else if(formula < minGoodA || formula > minBadA)
                     {
-                        description = "The test result is not so good, it equals to " + formula + " points. Your level hasn't changed. Try to work harder next time!";
+                        description = "The test result is not so good, it equals to " + formula + " points. Try to work harder next time!";
                     }
                     break;
                 case 6:
@@ -530,11 +535,11 @@ namespace BLL.Services.Concrete
                     minBadA = 32.5;
                     if (formula >= minGoodA && formula < minBadA)
                     {
-                        description = "The test result is good, it equals to " + formula + " points. Your level has increased. Congratulations!";
+                        description = "The test result is good, it equals to " + formula + " points. Congratulations!";
                     }
                     else if (formula < minGoodA || formula > minBadA)
                     {
-                        description = "The test result is not so good, it equals to " + formula + " points. Your level hasn't changed. Try to work harder next time!";
+                        description = "The test result is not so good, it equals to " + formula + " points. Try to work harder next time!";
                     }
                     break;
                 case 7:
@@ -542,11 +547,11 @@ namespace BLL.Services.Concrete
                     minBadA = 32.75;
                     if (formula >= minGoodA && formula < minBadA)
                     {
-                        description = "The test result is good, it equals to " + formula + " points. Your level has increased. Congratulations!";
+                        description = "The test result is good, it equals to " + formula + " points. Congratulations!";
                     }
                     else if (formula < minGoodA || formula > minBadA)
                     {
-                        description = "The test result is not so good, it equals to " + formula + " points. Your level hasn't changed. Try to work harder next time!";
+                        description = "The test result is not so good, it equals to " + formula + " points. Try to work harder next time!";
                     }
                     break;
                 case 8:
@@ -554,11 +559,11 @@ namespace BLL.Services.Concrete
                     minBadA = 33;
                     if (formula >= minGoodA && formula < minBadA)
                     {
-                        description = "The test result is good, it equals to " + formula + " points. Your level has increased. Congratulations!";
+                        description = "The test result is good, it equals to " + formula + " points. Congratulations!";
                     }
                     else if (formula < minGoodA || formula > minBadA)
                     {
-                        description = "The test result is not so good, it equals to " + formula + " points. Your level hasn't changed. Try to work harder next time!";
+                        description = "The test result is not so good, it equals to " + formula + " points. Try to work harder next time!";
                     }
                     break;
                 case 9:
@@ -566,11 +571,11 @@ namespace BLL.Services.Concrete
                     minBadA = 33.25;
                     if (formula >= minGoodA && formula < minBadA)
                     {
-                        description = "The test result is good, it equals to " + formula + " points. Your level has increased. Congratulations!";
+                        description = "The test result is good, it equals to " + formula + " points. Congratulations!";
                     }
                     else if (formula < minGoodA || formula > minBadA)
                     {
-                        description = "The test result is not so good, it equals to " + formula + " points. Your level hasn't changed. Try to work harder next time!";
+                        description = "The test result is not so good, it equals to " + formula + " points. Try to work harder next time!";
                     }
                     break;
                 case 10:
@@ -578,11 +583,11 @@ namespace BLL.Services.Concrete
                     minBadA = 33.5;
                     if (formula >= minGoodA && formula < minBadA)
                     {
-                        description = "The test result is good, it equals to " + formula + " points. Your level has increased. Congratulations!";
+                        description = "The test result is good, it equals to " + formula + " points. Congratulations!";
                     }
                     else if (formula < minGoodA || formula > minBadA)
                     {
-                        description = "The test result is not so good, it equals to " + formula + " points. Your level hasn't changed. Try to work harder next time!";
+                        description = "The test result is not so good, it equals to " + formula + " points. Try to work harder next time!";
                     }
                     break;
             }
@@ -601,11 +606,11 @@ namespace BLL.Services.Concrete
                     minBadB = 32.5;
                     if (formula >= minGoodB && formula < minBadB)
                     {
-                        description = "The test result is good, it equals to " + formula + " points. Your level has increased. Congratulations!";
+                        description = "The test result is good, it equals to " + formula + " points. Congratulations!";
                     }
                     else if (formula < minGoodB || formula > minBadB)
                     {
-                        description = "The test result is not so good, it equals to " + formula + " points. Your level hasn't changed. Try to work harder next time!";
+                        description = "The test result is not so good, it equals to " + formula + " points. Try to work harder next time!";
                     }
                     break;
                 case 6:
@@ -613,11 +618,11 @@ namespace BLL.Services.Concrete
                     minBadB = 33.1;
                     if (formula >= minGoodB && formula < minBadB)
                     {
-                        description = "The test result is good, it equals to " + formula + " points. Your level has increased. Congratulations!";
+                        description = "The test result is good, it equals to " + formula + " points. Congratulations!";
                     }
                     else if (formula < minGoodB || formula > minBadB)
                     {
-                        description = "The test result is not so good, it equals to " + formula + " points. Your level hasn't changed. Try to work harder next time!";
+                        description = "The test result is not so good, it equals to " + formula + " points. Try to work harder next time!";
                     }
                     break;
                 case 7:
@@ -625,11 +630,11 @@ namespace BLL.Services.Concrete
                     minBadB = 32.45;
                     if (formula >= minGoodB && formula < minBadB)
                     {
-                        description = "The test result is good, it equals to " + formula + " points. Your level has increased. Congratulations!";
+                        description = "The test result is good, it equals to " + formula + " points. Congratulations!";
                     }
                     else if (formula < minGoodB || formula > minBadB)
                     {
-                        description = "The test result is not so good, it equals to " + formula + " points. Your level hasn't changed. Try to work harder next time!";
+                        description = "The test result is not so good, it equals to " + formula + " points. Try to work harder next time!";
                     }
                     break;
                 case 8:
@@ -637,11 +642,11 @@ namespace BLL.Services.Concrete
                     minBadB = 33.8;
                     if (formula >= minGoodB && formula < minBadB)
                     {
-                        description = "The test result is good, it equals to " + formula + " points. Your level has increased. Congratulations!";
+                        description = "The test result is good, it equals to " + formula + " points. Congratulations!";
                     }
                     else if (formula < minGoodB || formula > minBadB)
                     {
-                        description = "The test result is not so good, it equals to " + formula + " points. Your level hasn't changed. Try to work harder next time!";
+                        description = "The test result is not so good, it equals to " + formula + " points. Try to work harder next time!";
                     }
                     break;
                 case 9:
@@ -649,11 +654,11 @@ namespace BLL.Services.Concrete
                     minBadB = 34.15;
                     if (formula >= minGoodB && formula < minBadB)
                     {
-                        description = "The test result is good, it equals to " + formula + " points. Your level has increased. Congratulations!";
+                        description = "The test result is good, it equals to " + formula + " points. Congratulations!";
                     }
                     else if (formula < minGoodB || formula > minBadB)
                     {
-                        description = "The test result is not so good, it equals to " + formula + " points. Your level hasn't changed. Try to work harder next time!";
+                        description = "The test result is not so good, it equals to " + formula + " points. Try to work harder next time!";
                     }
                     break;
                 case 10:
@@ -661,11 +666,11 @@ namespace BLL.Services.Concrete
                     minBadB = 34.5;
                     if (formula >= minGoodB && formula < minBadB)
                     {
-                        description = "The test result is good, it equals to " + formula + " points. Your level has increased. Congratulations!";
+                        description = "The test result is good, it equals to " + formula + " points. Congratulations!";
                     }
                     else if (formula < minGoodB || formula > minBadB)
                     {
-                        description = "The test result is not so good, it equals to " + formula + " points. Your level hasn't changed. Try to work harder next time!";
+                        description = "The test result is not so good, it equals to " + formula + " points. Try to work harder next time!";
                     }
                     break;
             }
@@ -683,11 +688,11 @@ namespace BLL.Services.Concrete
                     minBadC = 33;
                     if (formula >= minGoodC && formula < minBadC)
                     {
-                        description = "The test result is good, it equals to " + formula + " points. Your level has increased. Congratulations!";
+                        description = "The test result is good, it equals to " + formula + " points. Congratulations!";
                     }
                     else if (formula < minGoodC || formula > minBadC)
                     {
-                        description = "The test result is not so good, it equals to " + formula + " points. Your level hasn't changed. Try to work harder next time!";
+                        description = "The test result is not so good, it equals to " + formula + " points. Try to work harder next time!";
                     }
                     break;
                 case 6:
@@ -695,11 +700,11 @@ namespace BLL.Services.Concrete
                     minBadC = 33.4;
                     if (formula >= minGoodC && formula < minBadC)
                     {
-                        description = "The test result is good, it equals to " + formula + " points. Your level has increased. Congratulations!";
+                        description = "The test result is good, it equals to " + formula + " points. Congratulations!";
                     }
                     else if (formula < minGoodC || formula > minBadC)
                     {
-                        description = "The test result is not so good, it equals to " + formula + " points. Your level hasn't changed. Try to work harder next time!";
+                        description = "The test result is not so good, it equals to " + formula + " points. Try to work harder next time!";
                     }
                     break;
                 case 7:
@@ -707,11 +712,11 @@ namespace BLL.Services.Concrete
                     minBadC = 33.8;
                     if (formula >= minGoodC && formula < minBadC)
                     {
-                        description = "The test result is good, it equals to " + formula + " points. Your level has increased. Congratulations!";
+                        description = "The test result is good, it equals to " + formula + " points. Congratulations!";
                     }
                     else if (formula < minGoodC || formula > minBadC)
                     {
-                        description = "The test result is not so good, it equals to " + formula + " points. Your level hasn't changed. Try to work harder next time!";
+                        description = "The test result is not so good, it equals to " + formula + " points. Try to work harder next time!";
                     }
                     break;
                 case 8:
@@ -719,11 +724,11 @@ namespace BLL.Services.Concrete
                     minBadC = 34.2;
                     if (formula >= minGoodC && formula < minBadC)
                     {
-                        description = "The test result is good, it equals to " + formula + " points. Your level has increased. Congratulations!";
+                        description = "The test result is good, it equals to " + formula + " points. Congratulations!";
                     }
                     else if (formula < minGoodC || formula > minBadC)
                     {
-                        description = "The test result is not so good, it equals to " + formula + " points. Your level hasn't changed. Try to work harder next time!";
+                        description = "The test result is not so good, it equals to " + formula + " points. Try to work harder next time!";
                     }
                     break;
                 case 9:
@@ -731,11 +736,11 @@ namespace BLL.Services.Concrete
                     minBadC = 34.6;
                     if (formula >= minGoodC && formula < minBadC)
                     {
-                        description = "The test result is good, it equals to " + formula + " points. Your level has increased. Congratulations!";
+                        description = "The test result is good, it equals to " + formula + " points. Congratulations!";
                     }
                     else if (formula < minGoodC || formula > minBadC)
                     {
-                        description = "The test result is not so good, it equals to " + formula + " points. Your level hasn't changed. Try to work harder next time!";
+                        description = "The test result is not so good, it equals to " + formula + " points. Try to work harder next time!";
                     }
                     break;
                 case 10:
@@ -743,11 +748,11 @@ namespace BLL.Services.Concrete
                     minBadC = 35;
                     if (formula >= minGoodC && formula < minBadC)
                     {
-                        description = "The test result is good, it equals to " + formula + " points. Your level has increased. Congratulations!";
+                        description = "The test result is good, it equals to " + formula + " points. Congratulations!";
                     }
                     else if (formula < minGoodC || formula > minBadC)
                     {
-                        description = "The test result is not so good, it equals to " + formula + " points. Your level hasn't changed. Try to work harder next time!";
+                        description = "The test result is not so good, it equals to " + formula + " points. Try to work harder next time!";
                     }
                     break;
             }

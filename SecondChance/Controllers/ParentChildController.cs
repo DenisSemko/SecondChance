@@ -1,4 +1,5 @@
 ﻿using BLL.Services.Abstract;
+using CIL.DTOs;
 using CIL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -28,24 +29,22 @@ namespace SecondChance.Controllers
         }
 
         [HttpGet("{id:Guid}")]
-        public async Task<ActionResult<ParentChild>> GetById(Guid id)
+        public async Task<IEnumerable<ParentChild>> GetById(Guid id)
         {
             try
             {
-                var result = await parentChildService.GetById(id);
-                if (result == null) return NotFound();
+                var result = await parentChildService.GetByParentId(id);
 
                 return result;
             }
             catch (Exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error retrieving data from the database");
+                throw;
             }
         }
 
         [HttpPost]
-        public async Task<ActionResult<ParentChild>> Add(ParentChild parentChild)
+        public async Task<ActionResult<ParentChild>> Add(ParentChildDto parentChild)
         {
             try
             {
