@@ -37,6 +37,18 @@ namespace BLL.Services.Concrete
             return result;
         }
 
+        public async Task<User> GetUserByUsernameAsync(string username)
+        {
+            var result = await unitOfWork.UserRepository.GetUserByUsernameAsync(username);
+            return result;
+        }
+
+        public async Task<string> GetIdByUsername(string username)
+        {
+            var result = await unitOfWork.UserRepository.GetIdByUsername(username);
+            return result;
+        }
+
         public async Task<User> Add(UserPostDto userDto)
         {
             var user = new User()

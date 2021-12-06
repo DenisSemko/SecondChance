@@ -9,5 +9,6 @@ namespace DAL.Repository.Abstract
     public interface IUserRepository : IRepository<User>
     {
         public Task<User> GetUserByUsernameAsync(string username);
+        public Task<string> GetIdByUsername(string username);
     }
 }

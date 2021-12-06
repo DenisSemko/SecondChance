@@ -53,6 +53,23 @@ namespace SecondChance.Controllers
             }
         }
 
+        [HttpGet("{username}")]
+        public async Task<ActionResult<string>> GetIdByUsername(string username)
+        {
+            try
+            {
+                var result = await userService.GetIdByUsername(username);
+                if (result == null) return NotFound();
+
+                return result;
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Error retrieving data from the database");
+            }
+        }
+
         [HttpPost]
         public async Task<ActionResult<User>> Add(UserPostDto user)
         {

@@ -17,5 +17,10 @@ namespace DAL.Repository.Concrete
             return await databaseContext.Users
                 .SingleOrDefaultAsync(x => x.UserName == username);
         }
+        public async Task<string> GetIdByUsername(string username)
+        {
+           var user = await databaseContext.Users.SingleOrDefaultAsync(x => x.UserName == username);
+            return user.Id.ToString();
+        }
     }
 }
