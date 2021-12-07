@@ -59,7 +59,7 @@ namespace BLL.Services.Concrete
         {
             var allAnswers = await GetAllAnswers(userId, testId);
             // > 10
-            if (allAnswers.Count() > 1)
+            if (allAnswers.Count() < 10)
             {
                 Debug.Assert(false);
                 return;
