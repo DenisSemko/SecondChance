@@ -8,6 +8,7 @@ namespace DAL.Repository.Abstract
 {
     public interface IParentChildRepository : IRepository<ParentChild>
     {
-        public Task<IEnumerable<ParentChild>> GetByParentId(Guid id);
+        public Task<ParentChild> GetByParentId(Guid id);
+        public Task<ParentChild> DeleteByChildId(Guid id);
     }
 }

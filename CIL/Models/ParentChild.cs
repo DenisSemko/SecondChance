@@ -9,5 +9,7 @@ namespace CIL.Models
         public Guid Id { get; set; }
         public User Parent { get; set; }
         public User Child { get; set; }
+
+        public List<User> ChildList {  get; set;}
     }
 }

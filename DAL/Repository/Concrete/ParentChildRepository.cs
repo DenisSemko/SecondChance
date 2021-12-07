@@ -13,9 +13,16 @@ namespace DAL.Repository.Concrete
     {
         public ParentChildRepository(DatabaseContext databaseContext) : base(databaseContext) { }
 
-        public async Task<IEnumerable<ParentChild>> GetByParentId(Guid id)
+        public async Task<ParentChild> GetByParentId(Guid id)
         {
-            var result = await databaseContext.ParentChild.Where(o => o.Parent.Id == id).Include(o => o.Child).ToListAsync();
+            var result = await databaseContext.ParentChild.Where(o => o.Parent.Id == id).Include(o => o.ChildList).FirstOrDefaultAsync();
+            return result;
+        }
+        public async Task<ParentChild> DeleteByChildId(Guid id)
+        {
+            var result = await databaseContext.ParentChild.Where(o => o.Child.Id == id).FirstOrDefaultAsync();
+            databaseContext.Set<ParentChild>().Remove(result);
+            await databaseContext.SaveChangesAsync();
             return result;
         }
     }

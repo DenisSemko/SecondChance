@@ -29,7 +29,7 @@ namespace SecondChance.Controllers
         }
 
         [HttpGet("{id:Guid}")]
-        public async Task<IEnumerable<ParentChild>> GetById(Guid id)
+        public async Task<ParentChild> GetById(Guid id)
         {
             try
             {
@@ -56,6 +56,23 @@ namespace SecondChance.Controllers
                 var result = await parentChildService.Add(parentChild);
                 return result;
 
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        [HttpDelete("{id:Guid}")]
+        public async Task<ActionResult<ParentChild>> DeleteByUserId(Guid id)
+        {
+            try
+            {
+                var result = await parentChildService.DeleteByChildId(id);
+
+                if (result == null) return NotFound();
+
+                return result;
             }
             catch (Exception)
             {
